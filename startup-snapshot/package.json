@@ -1,0 +1,9 @@
+{
+  "name": "startup-snapshot",
+  "dependencies": {
+    "@orama/orama": "2.0.17"
+  },
+  "devDependencies": {
+    "esbuild": "0.20.2"
+  }
+}
