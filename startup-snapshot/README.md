@@ -35,7 +35,8 @@ Lots....
 
 - user snap shots can't include any ESM code, even if dynamic imports are used from cjs
 - not all cjs code works either
-- if the snapshot becomes large we need both EFS and to increase the 512MB storage for the lambda (which also means using a VPC....)
+- if the snapshot becomes large we need either EFS (which would also meen a VPC), or to increase the 512MB storage for the lambda
+- downloading from s3 to lambda ephemeral storage would increase cold starts
 - the exec wrapper has it's own limitions
 - example bootstrap.sh (AWS_LAMBDA_EXEC_WRAPPER /var/task/bootstrap.sh)
 ```sh
