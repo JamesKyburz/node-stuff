@@ -34,3 +34,11 @@ And a slightly different PATH
 npm adds .bin paths to package.json files found in parent directories and also adds
 
 Also as of node 22 we get a warning as this is an experimental feature :)
+
+Both npm and node --run require an extra -- to parse flags to the node script
+
+Example
+```sh
+npm run x -- --help
+node --run x -- --help
+```
