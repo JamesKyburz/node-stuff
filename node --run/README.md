@@ -2,7 +2,9 @@
 
 ## What's the difference?
 
-Basically the same except the following env differences
+No script hooks!
+
+And basically the same except the following env differences
 
 None of the following
 
