@@ -143,7 +143,7 @@ done < <(find javascript -name '*.json' -type f | grep -v vscode | grep -v eslin
 }
 {
   "file": "javascript/builtins/Promise.json",
-  "feature": "https://tc39.es/proposal-promise-with-resolvers/#sec-promise.withResolvers",
+  "feature": "https://tc39.es/ecma262/multipage/control-abstraction-objects.html#sec-promise.withResolvers",
   "version_added": "22.0.0"
 }
 {
