@@ -6,6 +6,8 @@ Sometimes the release notes don't specify what features are new/removed.
 * [mozilla JavaScript Reference](https://developer.mozilla.org/en-US/docs/Web) contains the latest javascript features.
 * [node 20 release notes](https://nodejs.org/en/blog/announcements/v20-release-announce)
 * [node 20 changelog](https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V20.md)
+* [node 22 release notes](https://nodejs.org/en/blog/announcements/v22-release-announce)
+* [node 22 changelog](https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V22.md)
 
 The Mozilla JavaScript Reference uses git@github.com:mdn/browser-compat-data.git to render it's compatibility tables.
 
