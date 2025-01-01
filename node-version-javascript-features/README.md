@@ -17,6 +17,7 @@ We can use this repository as a resource with the awesome tool [jq](https://gith
 
 ```sh
 git clone git@github.com:mdn/browser-compat-data.git
+cd browser-compat-data
 export major_version="22"
 while IFS= read -r file; do
   jq """
@@ -27,20 +28,44 @@ while IFS= read -r file; do
       has(\"nodejs\"))) |
       .__compat |
       select(.support.nodejs |
-      (
-        (.version_added? |
-          (. == tostring and startswith(\"${major_version:?}\"))
+        if type == \"array\" then
+          any(.[]; 
+            (.version_added? |
+              (. == tostring and startswith(\"${major_version:?}\"))
+            )
+            or
+            (.version_removed? |
+              (. == tostring and startswith(\"${major_version:?}\"))
+            )
+          )
+        else
+        (
+          (.version_added? |
+            (. == tostring and startswith(\"${major_version:?}\"))
+          )
+          or
+          (.version_removed? |
+            (. == tostring and startswith(\"${major_version:?}\"))
+          )
         )
-        or
-        (.version_removed? |
-          (. == tostring and startswith(\"${major_version:?}\"))
-        )
-      )
+      end
     ) |
     {
       file: \"${file:?}\",
       feature: (.spec_url // .description),
-    } * .support.nodejs
+    } *
+    (
+      if .support.nodejs | type == \"array\" then
+        { nodejs: [.support.nodejs[] |
+          select(
+            (.version_added? | (. == tostring and startswith(\"${major_version:?}\"))) or
+            (.version_removed? | (. == tostring and startswith(\"${major_version:?}\")))
+          )
+        ]}
+      else
+        { nodejs: .support.nodejs }
+      end
+    )
   """ < "${file:?}"
 done < <(find javascript -name '*.json' -type f | grep -v vscode | grep -v eslint)
 ```
@@ -51,108 +76,160 @@ done < <(find javascript -name '*.json' -type f | grep -v vscode | grep -v eslin
 {
   "file": "javascript/builtins/Set.json",
   "feature": "https://tc39.es/proposal-set-methods/#sec-set.prototype.difference",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Set.json",
   "feature": "https://tc39.es/proposal-set-methods/#sec-set.prototype.intersection",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Set.json",
   "feature": "https://tc39.es/proposal-set-methods/#sec-set.prototype.isdisjointfrom",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Set.json",
   "feature": "https://tc39.es/proposal-set-methods/#sec-set.prototype.issubsetof",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Set.json",
   "feature": "https://tc39.es/proposal-set-methods/#sec-set.prototype.issupersetof",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Set.json",
   "feature": "https://tc39.es/proposal-set-methods/#sec-set.prototype.symmetricdifference",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Set.json",
   "feature": "https://tc39.es/proposal-set-methods/#sec-set.prototype.union",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Array.json",
   "feature": "https://tc39.es/proposal-array-from-async/#sec-array.fromAsync",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Iterator.json",
   "feature": "https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.drop",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Iterator.json",
   "feature": "https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.every",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Iterator.json",
   "feature": "https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.filter",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Iterator.json",
   "feature": "https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.find",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Iterator.json",
   "feature": "https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.flatmap",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Iterator.json",
   "feature": "https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.foreach",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Iterator.json",
   "feature": "https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.map",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Iterator.json",
   "feature": "https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.reduce",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Iterator.json",
   "feature": "https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.some",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Iterator.json",
   "feature": "https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.take",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Iterator.json",
   "feature": "https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.toarray",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Promise.json",
   "feature": "https://tc39.es/ecma262/multipage/control-abstraction-objects.html#sec-promise.withResolvers",
-  "version_added": "22.0.0"
+  "nodejs": {
+    "version_added": "22.0.0"
+  }
 }
 {
   "file": "javascript/statements.json",
-  "feature": "Import attributes with <code>assert</code> syntax (formerly import assertions)",
-  "version_added": "16.14.0",
-  "version_removed": "22.0.0"
+  "feature": "Import attributes with `assert` syntax (formerly import assertions)",
+  "nodejs": {
+    "version_added": "16.14.0",
+    "version_removed": "22.0.0"
+  }
+}
+{
+  "file": "javascript/statements.json",
+  "feature": "`assert {type: 'json'}`",
+  "nodejs": [
+    {
+      "version_added": "17.5.0",
+      "version_removed": "22.0.0"
+    }
+  ]
 }
 ```
 
@@ -161,128 +238,189 @@ done < <(find javascript -name '*.json' -type f | grep -v vscode | grep -v eslin
 ```json
 {
   "file": "javascript/operators/import_meta.json",
-  "feature": "https://html.spec.whatwg.org/multipage/webappapis.html#hostgetimportmetaproperties",
-  "version_added": "20.6.0",
-  "notes": "Returns a URL object instead of a string."
+  "feature": "https://html.spec.whatwg.org/multipage/webappapis.html#import-meta-resolve",
+  "nodejs": [
+    {
+      "version_added": "20.8.0"
+    },
+    {
+      "version_added": "20.6.0",
+      "version_removed": "20.8.0",
+      "partial_implementation": true,
+      "notes": "Returns a `URL` object instead of a string."
+    }
+  ]
 }
 {
   "file": "javascript/builtins/WeakSet.json",
   "feature": "Non-registered symbols as keys",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Array.json",
   "feature": "https://tc39.es/ecma262/multipage/indexed-collections.html#sec-array.prototype.toreversed",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Array.json",
   "feature": "https://tc39.es/ecma262/multipage/indexed-collections.html#sec-array.prototype.tosorted",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Array.json",
   "feature": "https://tc39.es/ecma262/multipage/indexed-collections.html#sec-array.prototype.tospliced",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/Array.json",
   "feature": "https://tc39.es/ecma262/multipage/indexed-collections.html#sec-array.prototype.with",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/RegExp.json",
   "feature": "https://tc39.es/ecma262/multipage/text-processing.html#sec-get-regexp.prototype.unicodesets",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/FinalizationRegistry.json",
   "feature": "Non-registered symbol as target",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/String.json",
   "feature": "https://tc39.es/ecma262/multipage/text-processing.html#sec-string.prototype.iswellformed",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/String.json",
   "feature": "https://tc39.es/ecma262/multipage/text-processing.html#sec-string.prototype.towellformed",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/TypedArray.json",
   "feature": "https://tc39.es/ecma262/multipage/indexed-collections.html#sec-%typedarray%.prototype.toreversed",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/TypedArray.json",
   "feature": "https://tc39.es/ecma262/multipage/indexed-collections.html#sec-%typedarray%.prototype.tosorted",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/TypedArray.json",
   "feature": "https://tc39.es/ecma262/multipage/indexed-collections.html#sec-%typedarray%.prototype.with",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/ArrayBuffer.json",
   "feature": "https://tc39.es/ecma262/multipage/structured-data.html#sec-arraybuffer-constructor",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/ArrayBuffer.json",
   "feature": "https://tc39.es/ecma262/multipage/structured-data.html#sec-get-arraybuffer.prototype.maxbytelength",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/ArrayBuffer.json",
   "feature": "https://tc39.es/ecma262/multipage/structured-data.html#sec-get-arraybuffer.prototype.resizable",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/ArrayBuffer.json",
   "feature": "https://tc39.es/ecma262/multipage/structured-data.html#sec-arraybuffer.prototype.resize",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/SharedArrayBuffer.json",
   "feature": "https://tc39.es/ecma262/multipage/structured-data.html#sec-sharedarraybuffer-constructor",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/SharedArrayBuffer.json",
   "feature": "https://tc39.es/ecma262/multipage/structured-data.html#sec-sharedarraybuffer.prototype.grow",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/SharedArrayBuffer.json",
   "feature": "https://tc39.es/ecma262/multipage/structured-data.html#sec-get-sharedarraybuffer.prototype.growable",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/SharedArrayBuffer.json",
   "feature": "https://tc39.es/ecma262/multipage/structured-data.html#sec-get-sharedarraybuffer.prototype.maxbytelength",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/WeakRef.json",
   "feature": "Non-registered symbol as target",
-  "version_added": "20.0.0"
+  "nodejs": {
+    "version_added": "20.0.0"
+  }
 }
 {
   "file": "javascript/builtins/WeakMap.json",
   "feature": "Non-registered symbols as keys",
-  "version_added": "20.1.0"
+  "nodejs": {
+    "version_added": "20.1.0"
+  }
 }
 {
   "file": "javascript/statements.json",
-  "feature": "Import attributes (<code>with</code> syntax)",
-  "version_added": "20.10.0"
+  "feature": "https://tc39.es/proposal-import-attributes/#prod-WithClause",
+  "nodejs": [
+    {
+      "version_added": "20.10.0"
+    }
+  ]
 }
 {
   "file": "javascript/statements.json",
-  "feature": "<code>with {type: 'json'}</code>",
-  "version_added": "20.10.0"
+  "feature": "`with {type: 'json'}`",
+  "nodejs": [
+    {
+      "version_added": "20.10.0"
+    }
+  ]
 }
 ```
